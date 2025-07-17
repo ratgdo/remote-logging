@@ -2,7 +2,7 @@
 
 HOST="$1"
 
-// check if HOST was provided
+# check if HOST was provided
 if [ -z "$HOST" ]; then
   echo "Usage: $0 <ratgdo IP>"
   exit 1
