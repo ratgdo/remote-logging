@@ -32,15 +32,15 @@ Write-Host "---"
 
 try {
   $printNextLine = $false
-  
+
   curl.exe -s --no-buffer $Url | ForEach-Object {
     if ($printNextLine) {
       $timestamp = (Get-Date).ToUniversalTime().ToString("s") + "Z"
-      
+
       # --- THIS IS THE KEY CHANGE ---
       # Changed Write-Host to Write-Output to enable file redirection.
       Write-Output "$timestamp $_"
-      
+
       $printNextLine = $false
     }
     if ($_ -eq 'event: log') {
