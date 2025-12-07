@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# HOST from argument 1
-HOST="$1"
+# HOST from argument 1 with environment var fallback
+HOST="${1:-${HOST:-}}"
 
 # Check if a host is provided
 if [ -z "$HOST" ]; then
   echo "Usage: $0 <ratgdo_hostname_or_ip>"
+  echo "Alternatively set HOST environment variables."
   exit 1
 fi
 
