@@ -1,10 +1,10 @@
 Scripts for remote logging data from ratgdo
 
 ## macOS & Linux
-* Usage: `./ratgdo-logger.sh <RATGDO HOSTNAME OR IP>`
-* To capture to a file append the command with: ` > my.log`
-* Optionally, you can specify the ratgdo hostname/ip by setting the environment
-  variable `HOST`.
+* Usage: `./ratgdo-logger.sh <RATGDO HOSTNAME OR IP> [OPTIONAL OUTPUT LOG FILE]`
+* To capture to a file append the optional `[OPTIONAL OUTPUT LOG FILE]`.
+* Optionally, you can specify the ratgdo hostname/ip and output log file by
+  setting the environment variables `HOST` and `LOG_FILE`, respectively.
 
 **Example:**
 ```bash
