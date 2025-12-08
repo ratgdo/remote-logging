@@ -19,3 +19,4 @@ Checking firmware type...
 2025-08-01T12:20:03Z data: [D][ratgdo:229]: Light state=OFF
 2025-08-01T12:20:03Z data: [D][ratgdo:235]: Lock state=UNLOCKED
 2025-08-01T12:20:03Z data: [D][ratgdo:214]: Learn state=INACTIVE
+```
