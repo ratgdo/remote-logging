@@ -24,7 +24,9 @@ fi
 URL="http://$HOST/events"
 echo "Checking firmware type..."
 
-STATUS_CODE=$(curl --head -s -o /dev/null -w "%{http_code}" "$URL")
+# Test if the /events endpoint exists using GET with a time limit of 2 second,
+# since HEAD is not implemented.
+STATUS_CODE=$(curl -m 2 -s -o /dev/null -w "%{http_code}" "$URL")
 
 # TO DO: add case for homekit firmware
 if [ "$STATUS_CODE" -eq 200 ]; then

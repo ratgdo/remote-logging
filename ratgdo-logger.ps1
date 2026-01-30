@@ -15,17 +15,9 @@ else {
 $Url = "http://$HostName/events"
 Write-Host "Checking firmware type..."
 
-try {
-  $statusCode = (Invoke-WebRequest -Uri $Url -Method Head -TimeoutSec 5).StatusCode
-}
-catch {
-  if ($_.Exception.Response) {
-    $statusCode = [int]$_.Exception.Response.StatusCode
-  } else {
-    Write-Host -ForegroundColor Red "A connection error occurred: $($_.Exception.Message)"
-    exit 1
-  }
-}
+# Test if the /events endpoint exists using GET with a time limit of 2 second,
+# since HEAD is not implemented.
+$statusCode = [int](curl.exe -m 2 -s -o NUL -w "%{http_code}" $Url)
 
 if ($statusCode -eq 200) {
   Write-Host -ForegroundColor Green "ratgdo-esphome detected"
