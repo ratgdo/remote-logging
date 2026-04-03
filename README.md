@@ -6,7 +6,7 @@ Scripts for remote logging data from ratgdo
 
 **Example:**
 ```bash
-mbpm3:remote-logging paul$ ./ratgdo-logger.sh 10.0.1.191
+$ ./ratgdo-logger.sh 10.0.1.191
 Pinging 10.0.1.191...
 ✅ Host 10.0.1.191 is reachable.
 Checking firmware type...
