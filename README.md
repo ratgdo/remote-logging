@@ -4,11 +4,8 @@ Scripts for remote logging data from ratgdo
 * Usage: `./ratgdo-logger.sh <RATGDO HOSTNAME OR IP>`
 * To capture to a file append the command with: ` > my.log`
 
-## Windows PowerShell
-* Usage: `.\ratgdo-logger.ps1 -HostName <RATGDO HOSTNAME OR IP>`
-* To capture to a file append the command with: ` > my.log`
-
-```
+**Example:**
+```bash
 mbpm3:remote-logging paul$ ./ratgdo-logger.sh 10.0.1.191
 Pinging 10.0.1.191...
 ✅ Host 10.0.1.191 is reachable.
@@ -20,3 +17,7 @@ Checking firmware type...
 2025-08-01T12:20:03Z data: [D][ratgdo:235]: Lock state=UNLOCKED
 2025-08-01T12:20:03Z data: [D][ratgdo:214]: Learn state=INACTIVE
 ```
+
+## Windows PowerShell
+* Usage: `.\ratgdo-logger.ps1 -HostName <RATGDO HOSTNAME OR IP>`
+* To capture to a file append the command with: ` > my.log`
