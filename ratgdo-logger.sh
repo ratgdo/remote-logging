@@ -1,11 +1,14 @@
 #!/bin/bash
 
-# HOST from argument 1
-HOST="$1"
+# HOST from argument 1 with environment var fallback
+# LOG_FILE from optional argument 2 with environment var fallback
+HOST="${1:-${HOST:-}}"
+LOG_FILE="${2:-${LOG_FILE:-/dev/null}}"
 
 # Check if a host is provided
 if [ -z "$HOST" ]; then
-  echo "Usage: $0 <ratgdo_hostname_or_ip>"
+  echo "Usage: $0 <ratgdo_hostname_or_ip> [log_file]"
+  echo "Alternatively set HOST and LOG_FILE environment variables."
   exit 1
 fi
 
@@ -37,6 +40,7 @@ else
 fi
 
 # Begin log capture
+echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") Logging started" >>"$LOG_FILE"
 curl -s --no-buffer $URL | while IFS= read -r line; do
   clean_line=$(printf "%s" "$line" | tr -d '\r')
   if [[ "$clean_line" == "event: log" ]]; then
@@ -45,4 +49,4 @@ curl -s --no-buffer $URL | while IFS= read -r line; do
     timestamp=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     echo "$timestamp $next_line_clean"
   fi
-done
+done  | tee -a "$LOG_FILE"

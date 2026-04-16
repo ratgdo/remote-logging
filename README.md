@@ -1,8 +1,10 @@
 Scripts for remote logging data from ratgdo
 
 ## macOS & Linux
-* Usage: `./ratgdo-logger.sh <RATGDO HOSTNAME OR IP>`
-* To capture to a file append the command with: ` > my.log`
+* Usage: `./ratgdo-logger.sh <RATGDO HOSTNAME OR IP> [OPTIONAL OUTPUT LOG FILE]`
+* To capture to a file append the optional `[OPTIONAL OUTPUT LOG FILE]`.
+* Optionally, you can specify the ratgdo hostname/ip and output log file by
+  setting the environment variables `HOST` and `LOG_FILE`, respectively.
 
 **Example:**
 ```bash
@@ -21,3 +23,48 @@ Checking firmware type...
 ## Windows PowerShell
 * Usage: `.\ratgdo-logger.ps1 -HostName <RATGDO HOSTNAME OR IP>`
 * To capture to a file append the command with: ` > my.log`
+
+## Docker
+
+**Launch background log collector:**
+
+```bash
+docker run -d -e HOST="<RATGDO HOSTNAME OR IP>" \
+    -v ratgdo-log:/log \
+    --name ratgdo-logger \
+    --restart unless-stopped \
+    ghcr.io/ratgdo/remote-logging:latest
+```
+
+**Show logs:**
+
+```bash
+# add -f for live logs
+docker logs ratgdo-logger
+# or
+docker run --rm -v ratgdo-log:/l busybox cat /l/ratgdo.log
+```
+
+**Stop collection:**
+
+```bash
+docker stop ratgdo-logger
+```
+
+<details>
+<summary><b>Compose/stack example</b></summary>
+
+```yaml
+version: "3.8"
+services:
+  ratgdo-logger:
+    image: ghcr.io/ratgdo/remote-logging:latest
+    environment:
+      HOST: "<RATGDO HOSTNAME OR IP>"
+    volumes:
+      - ratgdo-log:/log
+    restart: unless-stopped
+volumes:
+  ratgdo-log:
+```
+</details>
