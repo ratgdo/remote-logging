@@ -20,6 +20,18 @@ Checking firmware type...
 2025-08-01T12:20:03Z data: [D][ratgdo:214]: Learn state=INACTIVE
 ```
 
+The [homekit-ratgdo32](https://github.com/ratgdo/homekit-ratgdo32) firmware is also auto-detected:
+```bash
+$ ./ratgdo-logger.sh 10.0.1.192
+Pinging 10.0.1.192...
+✅ Host 10.0.1.192 is reachable.
+Checking firmware type...
+✅ ratgdo-homekit detected
+2026-07-09T03:56:48Z data: I (10:51:51.044) ratgdo-http: Call SetGDO handler for Key: garageLightOn, Value: 1
+2026-07-09T03:56:48Z data: I (10:51:51.059) ratgdo-comms: Light on command already pending; ignored duplicate request
+2026-07-09T03:56:48Z data: V (10:51:51.073) ratgdo-http: SetGDO Complete
+```
+
 ## Windows PowerShell
 * Usage: `.\ratgdo-logger.ps1 -HostName <RATGDO HOSTNAME OR IP>`
 * To capture to a file append the command with: ` > my.log`
@@ -51,20 +63,11 @@ docker run --rm -v ratgdo-log:/l busybox cat /l/ratgdo.log
 docker stop ratgdo-logger
 ```
 
-<details>
-<summary><b>Compose/stack example</b></summary>
+**Or with Docker Compose**, using the [docker-compose.yml](docker-compose.yml) in this repo:
 
-```yaml
-version: "3.8"
-services:
-  ratgdo-logger:
-    image: ghcr.io/ratgdo/remote-logging:latest
-    environment:
-      HOST: "<RATGDO HOSTNAME OR IP>"
-    volumes:
-      - ratgdo-log:/log
-    restart: unless-stopped
-volumes:
-  ratgdo-log:
+```bash
+HOST="<RATGDO HOSTNAME OR IP>" docker compose up -d
 ```
-</details>
+
+See the comments at the top of that file for the full set of options, including
+stopping/cleanup and building locally from source instead of using the published image.

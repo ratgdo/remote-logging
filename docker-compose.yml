@@ -1,0 +1,23 @@
+# Usage:
+#   HOST=<hostname/IP> docker compose up          # uses the published ghcr.io image
+#   HOST=<hostname/IP> docker compose up --build  # builds locally from this directory instead,
+#                                                 # picking up uncommitted script/README edits
+#     (add -d or --detach to run in background)
+#
+#   HOST=<hostname/IP> docker compose down        # to stop and remove resources
+#   HOST=<hostname/IP> docker compose down -v     # remove persistent volume as well
+
+services:
+  ratgdo-logger:
+    image: ghcr.io/ratgdo/remote-logging:latest
+    build: .
+    restart: unless-stopped
+    environment:
+      # required - which ratgdo device to connect to
+      HOST: "${HOST:?Set HOST to your ratgdo device's hostname or IP, e.g. HOST=ratgdo1.lan docker compose up --build}"
+    volumes:
+      # persists the log file across container restarts
+      - ratgdo-log:/log
+
+volumes:
+  ratgdo-log:
