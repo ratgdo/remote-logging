@@ -29,17 +29,17 @@ echo "Checking firmware type..."
 
 # Test if the /events endpoint exists using GET with a time limit of 5 seconds,
 # since HEAD is not implemented. We use 5 seconds because mDNS resolution can sometimes be slow.
-STATUS_CODE=$(curl -m 5 -s -o /dev/null -w "%{http_code}" "$URL")
+STATUS_CODE=$(curl -4 -m 5 -s -o /dev/null -w "%{http_code}" "$URL")
 
 if [ "$STATUS_CODE" -eq 200 ]; then
   echo "✅ ratgdo-esphome detected"
 else
   # Test if the homekit firmware subscribe endpoint exists
   HOMEKIT_SUB_URL="http://$HOST/rest/events/subscribe?id=ratgdo-logger&log=1"
-  STATUS_CODE_HOMEKIT=$(curl -m 5 -s -o /dev/null -w "%{http_code}" "$HOMEKIT_SUB_URL")
+  STATUS_CODE_HOMEKIT=$(curl -4 -m 5 -s -o /dev/null -w "%{http_code}" "$HOMEKIT_SUB_URL")
   if [ "$STATUS_CODE_HOMEKIT" -eq 200 ]; then
     echo "✅ ratgdo-homekit detected"
-    EVENT_CHANNEL=$(curl -m 5 -s "$HOMEKIT_SUB_URL")
+    EVENT_CHANNEL=$(curl -4 -m 5 -s "$HOMEKIT_SUB_URL")
     URL="http://$HOST$EVENT_CHANNEL?id=ratgdo-logger"
   else
     echo "❌ unknown firmware type"
@@ -49,7 +49,7 @@ fi
 
 # Begin log capture
 echo "$(date -u +"%Y-%m-%dT%H:%M:%SZ") Logging started" >>"$LOG_FILE"
-curl -s --no-buffer "$URL" | while IFS= read -r line; do
+curl -4 -s --no-buffer "$URL" | while IFS= read -r line; do
   clean_line=$(printf "%s" "$line" | tr -d '\r')
   if [[ "$clean_line" == "event: log" ]] || [[ "$clean_line" == "event: logger" ]]; then
     read -r next_line

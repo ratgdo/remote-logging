@@ -17,17 +17,17 @@ Write-Host "Checking firmware type..."
 
 # Test if the /events endpoint exists using GET with a time limit of 5 seconds,
 # since HEAD is not implemented. We use 5 seconds because mDNS resolution can sometimes be slow.
-$statusCode = [int](curl.exe -m 5 -s -o NUL -w "%{http_code}" $Url)
+$statusCode = [int](curl.exe -4 -m 5 -s -o NUL -w "%{http_code}" $Url)
 
 if ($statusCode -eq 200) {
   Write-Host -ForegroundColor Green "ratgdo-esphome detected"
 }
 else {
   $HomeKitSubUrl = "http://$HostName/rest/events/subscribe?id=ratgdo-logger&log=1"
-  $statusCodeHomeKit = [int](curl.exe -m 5 -s -o NUL -w "%{http_code}" $HomeKitSubUrl)
+  $statusCodeHomeKit = [int](curl.exe -4 -m 5 -s -o NUL -w "%{http_code}" $HomeKitSubUrl)
   if ($statusCodeHomeKit -eq 200) {
     Write-Host -ForegroundColor Green "ratgdo-homekit detected"
-    $EventChannel = curl.exe -m 5 -s $HomeKitSubUrl
+    $EventChannel = curl.exe -4 -m 5 -s $HomeKitSubUrl
     $Url = "http://$HostName$EventChannel?id=ratgdo-logger"
   }
   else {
@@ -42,7 +42,7 @@ Write-Host "---"
 try {
   $printNextLine = $false
 
-  curl.exe -s --no-buffer $Url | ForEach-Object {
+  curl.exe -4 -s --no-buffer $Url | ForEach-Object {
     if ($printNextLine) {
       $timestamp = (Get-Date).ToUniversalTime().ToString("s") + "Z"
 
