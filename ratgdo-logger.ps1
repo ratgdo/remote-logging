@@ -15,16 +15,25 @@ else {
 $Url = "http://$HostName/events"
 Write-Host "Checking firmware type..."
 
-# Test if the /events endpoint exists using GET with a time limit of 2 second,
-# since HEAD is not implemented.
-$statusCode = [int](curl.exe -m 2 -s -o NUL -w "%{http_code}" $Url)
+# Test if the /events endpoint exists using GET with a time limit of 5 seconds,
+# since HEAD is not implemented. We use 5 seconds because mDNS resolution can sometimes be slow.
+$statusCode = [int](curl.exe -4 -m 5 -s -o NUL -w "%{http_code}" $Url)
 
 if ($statusCode -eq 200) {
   Write-Host -ForegroundColor Green "ratgdo-esphome detected"
 }
 else {
-  Write-Host -ForegroundColor Red "unknown firmware type (Received HTTP Status: $statusCode)"
-  exit 1
+  $HomeKitSubUrl = "http://$HostName/rest/events/subscribe?id=ratgdo-logger&log=1"
+  $statusCodeHomeKit = [int](curl.exe -4 -m 5 -s -o NUL -w "%{http_code}" $HomeKitSubUrl)
+  if ($statusCodeHomeKit -eq 200) {
+    Write-Host -ForegroundColor Green "ratgdo-homekit detected"
+    $EventChannel = curl.exe -4 -m 5 -s $HomeKitSubUrl
+    $Url = "http://$HostName$EventChannel?id=ratgdo-logger"
+  }
+  else {
+    Write-Host -ForegroundColor Red "unknown firmware type (Received HTTP Status: $statusCode)"
+    exit 1
+  }
 }
 
 Write-Host "Starting log capture from $Url... Press Ctrl+C to stop."
@@ -33,7 +42,7 @@ Write-Host "---"
 try {
   $printNextLine = $false
 
-  curl.exe -s --no-buffer $Url | ForEach-Object {
+  curl.exe -4 -s --no-buffer $Url | ForEach-Object {
     if ($printNextLine) {
       $timestamp = (Get-Date).ToUniversalTime().ToString("s") + "Z"
 
@@ -43,7 +52,7 @@ try {
 
       $printNextLine = $false
     }
-    if ($_ -eq 'event: log') {
+    if (($_ -eq 'event: log') -or ($_ -eq 'event: logger')) {
       $printNextLine = $true
     }
   }
