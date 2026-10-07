@@ -23,8 +23,17 @@ if ($statusCode -eq 200) {
   Write-Host -ForegroundColor Green "ratgdo-esphome detected"
 }
 else {
-  Write-Host -ForegroundColor Red "unknown firmware type (Received HTTP Status: $statusCode)"
-  exit 1
+  $HomeKitSubUrl = "http://$HostName/rest/events/subscribe?id=ratgdo-logger&log=1"
+  $statusCodeHomeKit = [int](curl.exe -m 2 -s -o NUL -w "%{http_code}" $HomeKitSubUrl)
+  if ($statusCodeHomeKit -eq 200) {
+    Write-Host -ForegroundColor Green "ratgdo-homekit detected"
+    $EventChannel = curl.exe -m 2 -s $HomeKitSubUrl
+    $Url = "http://$HostName$EventChannel?id=ratgdo-logger"
+  }
+  else {
+    Write-Host -ForegroundColor Red "unknown firmware type (Received HTTP Status: $statusCode)"
+    exit 1
+  }
 }
 
 Write-Host "Starting log capture from $Url... Press Ctrl+C to stop."
@@ -43,7 +52,7 @@ try {
 
       $printNextLine = $false
     }
-    if ($_ -eq 'event: log') {
+    if (($_ -eq 'event: log') -or ($_ -eq 'event: logger')) {
       $printNextLine = $true
     }
   }
